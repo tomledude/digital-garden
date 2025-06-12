@@ -48,6 +48,10 @@ class CosmicSymphony {
     }
     
     generateComposition() {
+        // Vary BPM between songs for uniqueness (round number)
+        this.bpm = Math.floor(60 + Math.random() * 40); // BPM between 60-99 (whole numbers)
+        this.beatDuration = 60 / this.bpm;
+        
         this.generateScale();
         this.generateChordProgression();
         this.generateMelody();
@@ -183,29 +187,240 @@ class CosmicSymphony {
     generatePercussion() {
         this.percussion = [];
         
+        // Generate different drum patterns for variety
+        const patterns = [
+            'basic', 'syncopated', 'complex', 'minimal'
+        ];
+        const selectedPattern = patterns[Math.floor(Math.random() * patterns.length)];
+        
         for (let measure = 0; measure < 8; measure++) {
             const measureStart = measure * 4;
             
-            // Kick on beats 1 and 3
-            this.percussion.push({
-                type: 'kick',
-                start: measureStart,
-                velocity: 0.8
-            });
-            this.percussion.push({
-                type: 'kick',
-                start: measureStart + 2,
-                velocity: 0.7
-            });
+            // Kick drum patterns
+            this.addKickPattern(measureStart, selectedPattern);
             
-            // Hi-hat on all beats
-            for (let beat = 0; beat < 4; beat++) {
-                this.percussion.push({
-                    type: 'hihat',
-                    start: measureStart + beat,
-                    velocity: 0.65+ Math.random() * 0.2
-                });
+            // Snare drum on beats 2 and 4 (classic)
+            this.addSnarePattern(measureStart, selectedPattern);
+            
+            // Hi-hat patterns with variation
+            this.addHiHatPattern(measureStart, selectedPattern);
+            
+            // Additional percussion elements
+            if (Math.random() > 0.6) {
+                this.addPerussionFills(measureStart, selectedPattern);
             }
+        }
+    }
+    
+    addKickPattern(measureStart, pattern) {
+        switch(pattern) {
+            case 'basic':
+                // Kick on beats 1 and 3
+                this.percussion.push({
+                    type: 'kick',
+                    start: measureStart,
+                    velocity: 0.8
+                });
+                this.percussion.push({
+                    type: 'kick',
+                    start: measureStart + 2,
+                    velocity: 0.7
+                });
+                break;
+                
+            case 'syncopated':
+                // Kick on 1, 2.5, 4
+                this.percussion.push({
+                    type: 'kick',
+                    start: measureStart,
+                    velocity: 0.8
+                });
+                this.percussion.push({
+                    type: 'kick',
+                    start: measureStart + 2.5,
+                    velocity: 0.6
+                });
+                this.percussion.push({
+                    type: 'kick',
+                    start: measureStart + 3.75,
+                    velocity: 0.7
+                });
+                break;
+                
+            case 'complex':
+                // More intricate kick pattern
+                this.percussion.push({
+                    type: 'kick',
+                    start: measureStart,
+                    velocity: 0.8
+                });
+                this.percussion.push({
+                    type: 'kick',
+                    start: measureStart + 1.5,
+                    velocity: 0.6
+                });
+                this.percussion.push({
+                    type: 'kick',
+                    start: measureStart + 2.75,
+                    velocity: 0.7
+                });
+                break;
+                
+            case 'minimal':
+                // Just beat 1
+                this.percussion.push({
+                    type: 'kick',
+                    start: measureStart,
+                    velocity: 0.8
+                });
+                break;
+        }
+    }
+    
+    addSnarePattern(measureStart, pattern) {
+        switch(pattern) {
+            case 'basic':
+            case 'minimal':
+                // Classic snare on 2 and 4
+                this.percussion.push({
+                    type: 'snare',
+                    start: measureStart + 1,
+                    velocity: 0.7
+                });
+                this.percussion.push({
+                    type: 'snare',
+                    start: measureStart + 3,
+                    velocity: 0.7
+                });
+                break;
+                
+            case 'syncopated':
+                // Snare with some syncopation
+                this.percussion.push({
+                    type: 'snare',
+                    start: measureStart + 1,
+                    velocity: 0.7
+                });
+                this.percussion.push({
+                    type: 'snare',
+                    start: measureStart + 2.25,
+                    velocity: 0.5
+                });
+                this.percussion.push({
+                    type: 'snare',
+                    start: measureStart + 3,
+                    velocity: 0.7
+                });
+                break;
+                
+            case 'complex':
+                // More complex snare pattern
+                this.percussion.push({
+                    type: 'snare',
+                    start: measureStart + 1,
+                    velocity: 0.7
+                });
+                this.percussion.push({
+                    type: 'snare',
+                    start: measureStart + 1.75,
+                    velocity: 0.4
+                });
+                this.percussion.push({
+                    type: 'snare',
+                    start: measureStart + 3,
+                    velocity: 0.7
+                });
+                this.percussion.push({
+                    type: 'snare',
+                    start: measureStart + 3.5,
+                    velocity: 0.5
+                });
+                break;
+        }
+    }
+    
+    addHiHatPattern(measureStart, pattern) {
+        switch(pattern) {
+            case 'basic':
+                // Standard eighth note hi-hats
+                for (let beat = 0; beat < 4; beat += 0.5) {
+                    this.percussion.push({
+                        type: 'hihat',
+                        start: measureStart + beat,
+                        velocity: 0.4 + Math.random() * 0.2,
+                        closed: beat % 1 !== 0 // Closed on off-beats
+                    });
+                }
+                break;
+                
+            case 'syncopated':
+                // More interesting hi-hat rhythm
+                const syncoHiHats = [0, 0.25, 0.75, 1, 1.5, 2, 2.25, 2.75, 3, 3.25, 3.75];
+                syncoHiHats.forEach(beat => {
+                    this.percussion.push({
+                        type: 'hihat',
+                        start: measureStart + beat,
+                        velocity: 0.3 + Math.random() * 0.3,
+                        closed: Math.random() > 0.3
+                    });
+                });
+                break;
+                
+            case 'complex':
+                // Sixteenth note patterns with gaps
+                for (let beat = 0; beat < 4; beat += 0.25) {
+                    if (Math.random() > 0.3) { // Skip some hits for groove
+                        this.percussion.push({
+                            type: 'hihat',
+                            start: measureStart + beat,
+                            velocity: 0.25 + Math.random() * 0.35,
+                            closed: Math.random() > 0.4
+                        });
+                    }
+                }
+                break;
+                
+            case 'minimal':
+                // Just on quarter notes
+                for (let beat = 0; beat < 4; beat++) {
+                    this.percussion.push({
+                        type: 'hihat',
+                        start: measureStart + beat,
+                        velocity: 0.5 + Math.random() * 0.2,
+                        closed: true
+                    });
+                }
+                break;
+        }
+    }
+    
+    addPerussionFills(measureStart, pattern) {
+        // Add occasional percussion fills and accents
+        if (Math.random() > 0.7) {
+            // Crash cymbal at start of some measures
+            this.percussion.push({
+                type: 'crash',
+                start: measureStart,
+                velocity: 0.6
+            });
+        }
+        
+        if (Math.random() > 0.8) {
+            // Rim shot accent
+            this.percussion.push({
+                type: 'rimshot',
+                start: measureStart + 1.5 + Math.random() * 1,
+                velocity: 0.5
+            });
+        }
+        
+        if (Math.random() > 0.85) {
+            // Tambourine shake
+            this.percussion.push({
+                type: 'tambourine',
+                start: measureStart + 2 + Math.random() * 1.5,
+                velocity: 0.4
+            });
         }
     }
     
@@ -230,41 +445,82 @@ class CosmicSymphony {
     }
     
     scheduleNotes() {
+        const currentTime = this.audioContext.currentTime;
+        
         // Schedule melody
         this.melody.forEach(note => {
             const startTime = this.startTime + note.start * this.beatDuration;
             const duration = note.duration * this.beatDuration;
-            this.playNote(note.note, startTime, duration, note.velocity, 'sine');
+            // Only schedule if startTime is in the future
+            if (startTime > currentTime) {
+                try {
+                    this.playNote(note.note, startTime, duration, note.velocity, 'sine');
+                } catch (e) {
+                    console.warn('Failed to schedule melody note:', e);
+                }
+            }
         });
         
         // Schedule bass
         this.bassLine.forEach(note => {
             const startTime = this.startTime + note.start * this.beatDuration;
             const duration = note.duration * this.beatDuration;
-            this.playNote(note.note, startTime, duration, note.velocity, 'triangle');
+            if (startTime > currentTime) {
+                try {
+                    this.playNote(note.note, startTime, duration, note.velocity, 'triangle');
+                } catch (e) {
+                    console.warn('Failed to schedule bass note:', e);
+                }
+            }
         });
         
         // Schedule pad chords
         this.padChords.forEach(chord => {
             const startTime = this.startTime + chord.start * this.beatDuration;
             const duration = chord.duration * this.beatDuration;
-            chord.notes.forEach(note => {
-                this.playNote(note, startTime, duration, chord.velocity, 'sawtooth');
-            });
+            if (startTime > currentTime) {
+                chord.notes.forEach(note => {
+                    try {
+                        this.playNote(note, startTime, duration, chord.velocity, 'sawtooth');
+                    } catch (e) {
+                        console.warn('Failed to schedule pad note:', e);
+                    }
+                });
+            }
         });
         
         // Schedule percussion
         this.percussion.forEach(hit => {
             const startTime = this.startTime + hit.start * this.beatDuration;
-            if (hit.type === 'kick') {
-                this.playKick(startTime, hit.velocity);
-            } else if (hit.type === 'hihat') {
-                this.playHiHat(startTime, hit.velocity);
+            if (startTime > currentTime) {
+                try {
+                    if (hit.type === 'kick') {
+                        this.playKick(startTime, hit.velocity);
+                    } else if (hit.type === 'hihat') {
+                        this.playHiHat(startTime, hit.velocity, hit.closed);
+                    } else if (hit.type === 'snare') {
+                        this.playSnare(startTime, hit.velocity);
+                    } else if (hit.type === 'crash') {
+                        this.playCrash(startTime, hit.velocity);
+                    } else if (hit.type === 'rimshot') {
+                        this.playRimshot(startTime, hit.velocity);
+                    } else if (hit.type === 'tambourine') {
+                        this.playTambourine(startTime, hit.velocity);
+                    }
+                } catch (e) {
+                    console.warn('Failed to schedule percussion:', hit.type, e);
+                }
             }
         });
     }
     
     playNote(midiNote, startTime, duration, velocity, waveform = 'sine') {
+        // Validate timing to prevent audio scheduling issues
+        if (startTime < this.audioContext.currentTime) {
+            console.warn('Attempted to schedule note in the past, skipping');
+            return;
+        }
+        
         const frequency = 440 * Math.pow(2, (midiNote - 69) / 12);
         
         const oscillator = this.audioContext.createOscillator();
@@ -295,6 +551,11 @@ class CosmicSymphony {
     }
     
     playKick(startTime, velocity) {
+        // Validate timing
+        if (startTime < this.audioContext.currentTime) {
+            return;
+        }
+        
         const oscillator = this.audioContext.createOscillator();
         const gain = this.audioContext.createGain();
         
@@ -311,9 +572,17 @@ class CosmicSymphony {
         
         oscillator.start(startTime);
         oscillator.stop(startTime + 0.3);
+        
+        // Track this node so it can be stopped
+        this.scheduledNotes.push(oscillator);
     }
     
-    playHiHat(startTime, velocity) {
+    playHiHat(startTime, velocity, closed = true) {
+        // Validate timing
+        if (startTime < this.audioContext.currentTime) {
+            return;
+        }
+        
         const noise = this.audioContext.createBufferSource();
         const buffer = this.audioContext.createBuffer(1, this.audioContext.sampleRate * 0.1, this.audioContext.sampleRate);
         const data = buffer.getChannelData(0);
@@ -326,7 +595,72 @@ class CosmicSymphony {
         
         const filter = this.audioContext.createBiquadFilter();
         filter.type = 'highpass';
-        filter.frequency.value = 8000;
+        // Closed hi-hats are higher frequency, open hi-hats are lower
+        filter.frequency.value = closed ? 10000 : 6000;
+        
+        const gain = this.audioContext.createGain();
+        gain.gain.value = 0;
+        gain.gain.setValueAtTime(velocity * 0.3, startTime);
+        // Open hi-hats ring longer than closed ones
+        const decayTime = closed ? 0.05 : 0.15;
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + decayTime);
+        
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.masterGain);
+        
+        noise.start(startTime);
+        
+        // Track this node so it can be stopped
+        this.scheduledNotes.push(noise);
+    }
+    
+    playSnare(startTime, velocity) {
+        // Validate timing
+        if (startTime < this.audioContext.currentTime) {
+            return;
+        }
+        
+        const oscillator = this.audioContext.createOscillator();
+        const gain = this.audioContext.createGain();
+        
+        oscillator.type = 'sine';
+        oscillator.frequency.value = 100;
+        oscillator.frequency.exponentialRampToValueAtTime(50, startTime + 0.1);
+        
+        gain.gain.value = 0;
+        gain.gain.setValueAtTime(velocity, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.3);
+        
+        oscillator.connect(gain);
+        gain.connect(this.masterGain);
+        
+        oscillator.start(startTime);
+        oscillator.stop(startTime + 0.3);
+        
+        // Track this node so it can be stopped
+        this.scheduledNotes.push(oscillator);
+    }
+    
+    playCrash(startTime, velocity) {
+        // Validate timing
+        if (startTime < this.audioContext.currentTime) {
+            return;
+        }
+        
+        const noise = this.audioContext.createBufferSource();
+        const buffer = this.audioContext.createBuffer(1, this.audioContext.sampleRate * 0.1, this.audioContext.sampleRate);
+        const data = buffer.getChannelData(0);
+        
+        for (let i = 0; i < data.length; i++) {
+            data[i] = Math.random() * 2 - 1;
+        }
+        
+        noise.buffer = buffer;
+        
+        const filter = this.audioContext.createBiquadFilter();
+        filter.type = 'highpass';
+        filter.frequency.value = 1000;
         
         const gain = this.audioContext.createGain();
         gain.gain.value = 0;
@@ -338,6 +672,71 @@ class CosmicSymphony {
         gain.connect(this.masterGain);
         
         noise.start(startTime);
+        
+        // Track this node so it can be stopped
+        this.scheduledNotes.push(noise);
+    }
+    
+    playRimshot(startTime, velocity) {
+        // Validate timing
+        if (startTime < this.audioContext.currentTime) {
+            return;
+        }
+        
+        const noise = this.audioContext.createBufferSource();
+        const buffer = this.audioContext.createBuffer(1, this.audioContext.sampleRate * 0.1, this.audioContext.sampleRate);
+        const data = buffer.getChannelData(0);
+        
+        for (let i = 0; i < data.length; i++) {
+            data[i] = Math.random() * 2 - 1;
+        }
+        
+        noise.buffer = buffer;
+        
+        const filter = this.audioContext.createBiquadFilter();
+        filter.type = 'highpass';
+        filter.frequency.value = 1000;
+        
+        const gain = this.audioContext.createGain();
+        gain.gain.value = 0;
+        gain.gain.setValueAtTime(velocity * 0.3, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.1);
+        
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.masterGain);
+        
+        noise.start(startTime);
+        
+        // Track this node so it can be stopped
+        this.scheduledNotes.push(noise);
+    }
+    
+    playTambourine(startTime, velocity) {
+        // Validate timing
+        if (startTime < this.audioContext.currentTime) {
+            return;
+        }
+        
+        const oscillator = this.audioContext.createOscillator();
+        const gain = this.audioContext.createGain();
+        
+        oscillator.type = 'sine';
+        oscillator.frequency.value = 200;
+        oscillator.frequency.exponentialRampToValueAtTime(100, startTime + 0.1);
+        
+        gain.gain.value = 0;
+        gain.gain.setValueAtTime(velocity, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.3);
+        
+        oscillator.connect(gain);
+        gain.connect(this.masterGain);
+        
+        oscillator.start(startTime);
+        oscillator.stop(startTime + 0.3);
+        
+        // Track this node so it can be stopped
+        this.scheduledNotes.push(oscillator);
     }
     
     stop() {

@@ -26,6 +26,26 @@
 
 		{#- Add the contents of a file to the bundle #}
 		<style>{% include "css/index.css" %}</style>
+		
+		{#- Background noise animation styles #}
+		<style>
+			.background-noise {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100vw;
+				height: 100vh;
+				z-index: -1;
+				pointer-events: none;
+				opacity: 0.8;
+			}
+			
+			/* Ensure content is above background */
+			header, main, footer {
+				position: relative;
+				z-index: 1;
+			}
+		</style>
 
 		{#- Or you can add from node_modules #}
 		{# <style>{% include "node_modules/something.css" %}</style> #}
@@ -40,6 +60,9 @@
 		<script type="module">{% include "node_modules/@zachleat/heading-anchors/heading-anchors.js" %}</script>
 	</head>
 	<body>
+		<!-- Background Perlin Noise Animation -->
+		<canvas id="background-noise" class="background-noise"></canvas>
+		
 		<a href="#main" id="skip-link" class="visually-hidden">Skip to main content</a>
 
 		<header>
@@ -97,6 +120,7 @@
 		<!-- This page `{{ page.url }}` was built on {% currentBuildDate %} -->
 		<script type="module" src="{% getBundleFileUrl "js" %}"></script>
 		<script src="/js/theme.js"></script>
+		<script src="/js/background-noise.js"></script>
 
 
 		<script>
